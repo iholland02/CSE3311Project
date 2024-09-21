@@ -1,0 +1,50 @@
+/* src/components/LoginPage/LoginPage.css */
+.login-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #2a3990; /* Deep blue background */
+  }
+  
+  .login-header {
+    padding: 20px;
+    background-color: #2a3990; /* Matches the page background */
+  }
+  
+  .login-logo {
+    height: 200px;
+    width: auto;
+  }
+  
+  .login-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+  }
+  
+  .login-footer {
+    padding: 20px;
+    text-align: center;
+    color: white;
+  }
+  
+  .login-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4285F4; /* Google blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .login-button:hover {
+    background-color: #357ae8;
+  }
+  
