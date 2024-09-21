@@ -1,4 +1,3 @@
-// src/components/LoginPage/LoginPage.js
 import React from 'react';
 import { auth, provider, signInWithPopup } from '../../firebase';
 import logo from '../../assets/images/logo-color.png';
@@ -8,7 +7,6 @@ const LoginPage = () => {
   const handleGoogleLogin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        // User logged in, handle redirection or state update here
       })
       .catch((error) => {
         console.error('Error logging in:', error);

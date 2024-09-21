@@ -1,11 +1,9 @@
-/* src/components/LoginPage/LoginPage.css */
 .login-page {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: #2a3990; /* Deep blue background */
-  }
-  
+    background-color: #2a3990;
+}
   .login-header {
     padding: 20px;
     background-color: #2a3990; /* Matches the page background */
@@ -36,7 +34,7 @@
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #4285F4; /* Google blue */
+    background-color: #4285F4;
     color: white;
     border: none;
     border-radius: 5px;

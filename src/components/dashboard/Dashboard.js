@@ -1,8 +1,7 @@
-// src/components/Dashboard/Dashboard.js
 import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
-import './Dashboard.css';  // Assuming you have minimal CSS for this
+import './Dashboard.css';
 
 const Dashboard = () => {
   return (
