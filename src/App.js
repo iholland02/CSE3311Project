@@ -3,12 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import LoginPage from './components/login-page/LoginPage';
-import Dashboard from './components/dashboard/Dashboard';  // Assume you have a component called Dashboard
+import Dashboard from './components/dashboard/Dashboard';
 
 const App = () => {
   const [user, setUser] = useState(null);
 
-  // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser ? currentUser : null);
