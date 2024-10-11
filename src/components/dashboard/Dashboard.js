@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { auth } from '../../firebase';  // Adjust based on your actual path
-import { onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from "react";
+import { auth } from "../../firebase"; // Adjust based on your actual path
+import { onAuthStateChanged } from "firebase/auth";
 import "../../App.css"; // Keep for common styles
 import "./Dashboard.css"; // Specific styles for dashboard
+import Topmenu from "./topmenu.js";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
-  const [task, setTask] = useState([{ id: crypto.randomUUID(), taskTitle: "Example", subTask: [] }]);
+  const [task, setTask] = useState([]);
   const [title, setTitle] = useState("");
   const [todos, setTodos] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -103,85 +104,141 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
-      {/* Create button and dropdown contents */}
-      <div className="dropdown">
-        <button className="dropbtn">Create</button>
-        <div className="dropdown-content">
-          <button onClick={() => OpenForm("CheckList-form")}>Check List</button>
-          <button>Date</button>
-          <button>More</button>
+    <>
+      <Topmenu />
+      <div className="dash-content">
+        <div className="relative lg:items-center lg:justify-between w-[100%]">
+          {/*create button and dropdown contents */}
+          <section className="inline-block relative justify-center pt-[20px] pb-[30px]">
+            <div className="dropdown">
+              <button className="dropbtn">Create</button>
+              <div className="dropdown-content">
+                <button onClick={() => OpenForm("CheckList-form")}>
+                  Check List
+                </button>
+                <button>Date</button>
+                <button>More</button>
+              </div>
+            </div>
+          </section>
+
+          {/* Form for entering main task */}
+          <div className="form-popup" id="CheckList-form">
+            <form onSubmit={handleSubmit} className="form-container">
+              <input
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+                type="text"
+                id="taskMain"
+                placeholder="MAIN TASK"
+              ></input>
+              <button
+                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-gray dark:border-dark-3 dark:text-dark-6"
+                onClick={() => OpenForm("createSub")}
+              >
+                Create
+              </button>
+              <button
+                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6"
+                onClick={() => CloseForm("CheckList-form")}
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+
+          {/* Form for entering sub-tasks */}
+          <div className="form-popup" id="createSub">
+            <div className="text-[30px]">{title}</div>{" "}
+            {/*display the MAIN TASK name */}
+            {todos.map((todo) => {
+              return (
+                <li key={todo.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={todo.completed}
+                      onChange={(e) => toggleTodo(todo.id, e.target.checked)}
+                    />
+                    {todo.completed ? <del>{todo.title}</del> : todo.title}
+                    {/*display the subtask after it is added to the list*/}
+                  </label>
+                  <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+                </li>
+              );
+            })}
+            <form onSubmit={createSubTask} className="form-container">
+              <input
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+                type="text"
+                id="item"
+                placeholder="SubTask"
+              />
+              <button className="close-btn">Add</button>{" "}
+              {/*clciking this add button will add subTask to the screen and temporarily store the value in the todos[] */}
+              <button className="close-btn" onClick={() => newTask()}>
+                {" "}
+                {/* clicking this will call our newTask function */}
+                Done
+              </button>
+            </form>
+          </div>
+
+          {/* Display all tasks */}
+          <div className="grid grid-cols-4 gap-4 p-5">
+            {task.map((taskInfo) => {
+              return (
+                <>
+                  <ul>
+                    <div
+                      className="mb-10 overflow-hidden border border-black border-2 rounded-lg bg-primary text-black p-6 shadow-1 duration-300 hover:shadow-3 dark:bg-dark-2 dark:shadow-card dark:hover:shadow-3"
+                      id="displayTask"
+                    >
+                      <div className="text-[30px] font-bold">
+                        {taskInfo.taskTitle}
+                      </div>
+                      <div className="pt-5 pb-8 text-left">
+                        {taskInfo.subTask.map((sub) => {
+                          return (
+                            <li key={sub.id}>
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  checked={sub.completed}
+                                  onChange={(e) =>
+                                    toggleTask(
+                                      taskInfo.id,
+                                      sub.id,
+                                      e.target.checked
+                                    )
+                                  }
+                                />
+                                {sub.completed ? (
+                                  <del>{sub.text}</del>
+                                ) : (
+                                  sub.text
+                                )}
+                              </label>
+                            </li>
+                          );
+                        })}
+                      </div>
+                      <button
+                        className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6"
+                        id="edit-btn"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </ul>
+                </>
+              );
+            })}
+          </div>
         </div>
       </div>
-
-      {/* Form for entering main task */}
-      <div className="form-popup" id="CheckList-form">
-        <form onSubmit={handleSubmit} className="form-container">
-          <input
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            type="text"
-            id="taskMain"
-            placeholder="MAIN TASK"
-          ></input>
-          <button className="close-btn" onClick={() => OpenForm("createSub")}>
-            Create
-          </button>
-        </form>
-      </div>
-
-      {/* Form for entering sub-tasks */}
-      <div className="form-popup" id="createSub">
-        <h2>{title}</h2> {/* Display the MAIN TASK name */}
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            <label>
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={(e) => toggleTodo(todo.id, e.target.checked)}
-              />
-              {todo.completed ? <del>{todo.title}</del> : todo.title}
-            </label>
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-          </li>
-        ))}
-        <form onSubmit={createSubTask} className="form-container">
-          <input
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            type="text"
-            id="item"
-            placeholder="SubTask"
-          />
-          <button className="close-btn">Add</button>
-          <button className="close-btn" onClick={() => newTask()}>
-            Done
-          </button>
-        </form>
-      </div>
-
-      {/* Display all tasks */}
-      {task.map((taskInfo) => (
-        <ul key={taskInfo.taskTitle}>
-          <div className="task-display" id="displayTask">
-            <h2>{taskInfo.taskTitle}</h2>
-            {taskInfo.subTask.map((sub) => (
-              <li key={sub.id}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={sub.completed}
-                    onChange={(e) => toggleTask(taskInfo.id, sub.id, e.target.checked)}
-                  />
-                  {sub.completed ? <del>{sub.text}</del> : sub.text}
-                </label>
-              </li>
-            ))}
-          </div>
-        </ul>
-      ))}
-    </div>
+    </>
   );
 };
 
