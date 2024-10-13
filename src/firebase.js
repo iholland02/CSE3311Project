@@ -1,7 +1,6 @@
-// src/firebase/firebase.js
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
     apiKey: "AIzaSyBlcbdqepyV700M3No7S89lGMzF8mwTEr8",
@@ -13,9 +12,11 @@ const firebaseConfig = {
     measurementId: "G-L82PK9B5Y9"
   };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const analytics = getAnalytics(app);
 
-export { auth, provider, signInWithPopup, analytics };
+// Export the auth-related functions
+export { auth, provider, signInWithPopup, signOut, analytics };

@@ -1,71 +1,138 @@
-/* .dashboard-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f0f0f0;
-} */
-
-.dropdown {
-  float: left;
-  overflow: hidden;
-}
-
-.dropdown .dropbtn {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  background-color: #2a3990;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  color: white;
-}
-
-.dropdown:hover .dropbtn {
-  border-color: white;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #1a1a1a;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  padding: 12px;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-  padding: 12px;
-}
-
-.form-popup {
-  display: none;
-  position: absolute;
-  border: 3px solid #f1f1f1;
-  z-index: 9;
-  background-color: #d80a8d;
-  text-align: center;
-  color: white;
-}
-
-.form-container {
-  max-width: max-content;
-  padding: 10px;
-  background-color: #888;
-}
-
-.task-display {
-  display: block;
-  width: max-content;
-  height: max-content;
-  padding: 30px;
-  border: 2px solid #2a3990;
+.dashboard-container {
   position: relative;
-  top: 50px;
-  text-align: left;
+  padding: 20px;
+  background-color: #2a3990; /* Set the background color to blue */
+  height: 100vh; /* Ensure the height takes up the full view */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  color: white; /* Ensure text is readable on the blue background */
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px; /* Adjust padding to keep space on left and right */
+  width: 100%; /* Ensure it stretches across the screen */
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+.boardr-logo {
+  height: 40px; /* Adjust size as needed */
+  margin-left: 20px;
+}
+
+.center-header-text {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.center-header-text h1 {
+  font-size: 24px;
+  color: white;
+  margin: 0;
+}
+
+.create-button-container {
+  display: flex;
+  gap: 10px;
+  margin-right: 20px; /* Add a little space on the right */
+}
+
+.create-button, .logout-button {
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #2a3990;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.create-button:hover, .logout-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Popup styles */
+.popup {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Darkened background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-inner {
+  background-color: #2a3990; /* Popup background same blue as homepage */
+  padding: 20px;
+  width: 350px; /* Reduced width to ensure content fits well */
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.4s ease;
+  text-align: center; /* Center the content inside the popup */
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup-form input {
+  width: 95%; /* Ensure the input fits inside the popup with some padding */
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box; /* Ensure padding doesn't exceed the container width */
+}
+
+.popup-submit-btn, .popup-close-btn {
+  padding: 10px;
+  width: 100%;
+  background-color: white;
+  color: #2a3990;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.popup-submit-btn:hover, .popup-close-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* Board cards */
+.board-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 80px;
+}
+
+.board-card {
+  background-color: white;
+  width: 200px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #2a3990;
+  transition: transform 0.2s ease;
+}
+
+.board-card:hover {
+  transform: scale(1.05);
 }

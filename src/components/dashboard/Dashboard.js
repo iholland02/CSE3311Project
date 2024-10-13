@@ -1,186 +1,105 @@
 import React, { useEffect, useState } from 'react';
-import { auth } from '../../firebase';  // Adjust based on your actual path
+import { auth, signOut } from '../../firebase'; // Adjust the path based on your actual setup
 import { onAuthStateChanged } from 'firebase/auth';
-import "../../App.css"; // Keep for common styles
-import "./Dashboard.css"; // Specific styles for dashboard
+import '../../App.css'; // Keep for common styles
+import './Dashboard.css'; // Specific styles for dashboard
+import logo from '../../assets/images/logo-color.png'; // Ensure you adjust the path for your logo
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
-  const [task, setTask] = useState([{ id: crypto.randomUUID(), taskTitle: "Example", subTask: [] }]);
-  const [title, setTitle] = useState("");
-  const [todos, setTodos] = useState([]);
-  const [newItem, setNewItem] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [boards, setBoards] = useState([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [newBoardTitle, setNewBoardTitle] = useState('');
 
   // Authentication listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser ? currentUser : null);
+      if (currentUser) {
+        setUser(currentUser);
+        const displayName = currentUser.displayName || 'User'; // Ensure there's a fallback if no display name
+        setFirstName(displayName.split(' ')[0]); // Extract the first name
+      } else {
+        setUser(null);
+        setFirstName('');
+      }
     });
     return () => unsubscribe();
   }, []);
 
-  // Open and close forms based on id name
-  function OpenForm(id) {
-    document.getElementById(id).style.display = "block";
-  }
+  // Toggle the popup visibility
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
 
-  function CloseForm(id) {
-    document.getElementById(id).style.display = "none";
-  }
-
-  // Setting the main title of the task
-  function handleSubmit(e) {
+  // Handle creating a new board
+  const handleCreateBoard = (e) => {
     e.preventDefault();
-    setTitle(() => document.getElementById("taskMain").value);
-    setNewItem(""); // Clear text-box
-    CloseForm("CheckList-form");
-  }
+    if (newBoardTitle) {
+      setBoards([...boards, { id: crypto.randomUUID(), title: newBoardTitle }]);
+      setNewBoardTitle('');
+      setIsPopupOpen(false); // Close the popup after creating the board
+    }
+  };
 
-  // Populate the todos[] array to temporarily store subTask values
-  function createSubTask(e) {
-    e.preventDefault();
-    setTodos((currentTodos) => {
-      if (newItem !== "") {
-        return [
-          ...currentTodos,
-          { id: crypto.randomUUID(), title: newItem, completed: false },
-        ];
-      }
-      return currentTodos;
-    });
-    setNewItem(""); // Clear text-box
-  }
-
-  // Adding a new task to task[]
-  function newTask() {
-    const subTask = todos.map((todo) => ({
-      id: crypto.randomUUID(),
-      text: todo.title,
-      completed: false,
-    }));
-    setTask([
-      ...task,
-      { id: crypto.randomUUID(), taskTitle: title, subTask: subTask },
-    ]);
-    CloseForm("createSub");
-    setTodos([]); // Reset the todos[] after copying data to task[]
-  }
-
-  // Toggle task completion
-  function toggleTodo(id, completed) {
-    setTodos((currentTodos) => {
-      return currentTodos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, completed };
-        }
-        return todo;
+  // Handle logging out
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("User signed out");
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
       });
-    });
-  }
-
-  // Toggle completion for tasks on the dashboard
-  function toggleTask(tId, id, completed) {
-    setTask((temp) => {
-      return temp.map((ttitle) => {
-        if (ttitle.id === tId) {
-          ttitle.subTask.map((sub) => {
-            if (sub.id === id) {
-              sub.completed = completed;
-            }
-            return sub;
-          });
-        }
-        return ttitle;
-      });
-    });
-  }
-
-  // Delete todos during creation
-  function deleteTodo(id) {
-    setTodos((currentTodos) => {
-      return currentTodos.filter((todo) => todo.id !== id);
-    });
-  }
+  };
 
   return (
     <div className="dashboard-container">
-      {/* Create button and dropdown contents */}
-      <div className="dropdown">
-        <button className="dropbtn">Create</button>
-        <div className="dropdown-content">
-          <button onClick={() => OpenForm("CheckList-form")}>Check List</button>
-          <button>Date</button>
-          <button>More</button>
+      {/* Top header section */}
+      <div className="header-container">
+        {/* Boardr logo */}
+        <img src={logo} alt="Boardr Logo" className="boardr-logo" />
+        
+        {/* Center text with user's first name */}
+        <div className="center-header-text">
+          <h1>{firstName}'s Boards</h1>
+        </div>
+
+        {/* Create button and log out button */}
+        <div className="create-button-container">
+          <button className="create-button" onClick={togglePopup}>Create New Board</button>
+          <button className="logout-button" onClick={handleLogout}>Log Out</button>
         </div>
       </div>
 
-      {/* Form for entering main task */}
-      <div className="form-popup" id="CheckList-form">
-        <form onSubmit={handleSubmit} className="form-container">
-          <input
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            type="text"
-            id="taskMain"
-            placeholder="MAIN TASK"
-          ></input>
-          <button className="close-btn" onClick={() => OpenForm("createSub")}>
-            Create
-          </button>
-        </form>
-      </div>
-
-      {/* Form for entering sub-tasks */}
-      <div className="form-popup" id="createSub">
-        <h2>{title}</h2> {/* Display the MAIN TASK name */}
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            <label>
+      {/* Slide-in popup form */}
+      {isPopupOpen && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h2>Create New Project</h2>
+            <form onSubmit={handleCreateBoard} className="popup-form">
               <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={(e) => toggleTodo(todo.id, e.target.checked)}
+                type="text"
+                placeholder="Project/Assignment Title"
+                value={newBoardTitle}
+                onChange={(e) => setNewBoardTitle(e.target.value)}
+                required
               />
-              {todo.completed ? <del>{todo.title}</del> : todo.title}
-            </label>
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-          </li>
-        ))}
-        <form onSubmit={createSubTask} className="form-container">
-          <input
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            type="text"
-            id="item"
-            placeholder="SubTask"
-          />
-          <button className="close-btn">Add</button>
-          <button className="close-btn" onClick={() => newTask()}>
-            Done
-          </button>
-        </form>
-      </div>
-
-      {/* Display all tasks */}
-      {task.map((taskInfo) => (
-        <ul key={taskInfo.taskTitle}>
-          <div className="task-display" id="displayTask">
-            <h2>{taskInfo.taskTitle}</h2>
-            {taskInfo.subTask.map((sub) => (
-              <li key={sub.id}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={sub.completed}
-                    onChange={(e) => toggleTask(taskInfo.id, sub.id, e.target.checked)}
-                  />
-                  {sub.completed ? <del>{sub.text}</del> : sub.text}
-                </label>
-              </li>
-            ))}
+              <button type="submit" className="popup-submit-btn">Create</button>
+              <button type="button" className="popup-close-btn" onClick={togglePopup}>Cancel</button>
+            </form>
           </div>
-        </ul>
-      ))}
+        </div>
+      )}
+
+      {/* Display all created boards */}
+      <div className="board-container">
+        {boards.map((board) => (
+          <div key={board.id} className="board-card">
+            <h3>{board.title}</h3>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
