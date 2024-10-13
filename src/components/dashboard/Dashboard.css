@@ -18,13 +18,14 @@
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  background-color: #232323;
+  background-color: #2a3990;
   cursor: pointer;
   transition: border-color 0.25s;
+  color: white;
 }
 
 .dropdown:hover .dropbtn {
-  border-color: #646cff;
+  border-color: white;
 }
 
 .dropdown-content {
@@ -47,8 +48,9 @@
   position: absolute;
   border: 3px solid #f1f1f1;
   z-index: 9;
-  background-color: #1a1a1a;
+  background-color: #d80a8d;
   text-align: center;
+  color: white;
 }
 
 .form-container {
@@ -62,7 +64,7 @@
   width: max-content;
   height: max-content;
   padding: 30px;
-  border: 1px solid #f1f1f1;
+  border: 2px solid #2a3990;
   position: relative;
   top: 50px;
   text-align: left;
