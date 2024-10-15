@@ -131,8 +131,102 @@
   text-align: center;
   color: #2a3990;
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
 .board-card:hover {
   transform: scale(1.05);
+}
+
+/* Expanded board view for subtasks */
+.expanded-board {
+  background-color: white;
+  color: #2a3990;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 400px;
+  text-align: center;
+}
+
+.subtask-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.subtask-form input {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-subtask-btn {
+  padding: 10px;
+  background-color: #2a3990;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.subtask-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.subtask-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.subtask-list li.completed span {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.subtask-list li span {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.subtask-list li input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.subtask-list i {
+  cursor: pointer;
+  color: red;
+}
+
+.close-board-btn {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.delete-board-btn {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
 }
