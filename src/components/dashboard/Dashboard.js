@@ -117,7 +117,8 @@ const Dashboard = () => {
                   Check List
                 </button>
                 <button>Date</button>
-                <button>More</button>
+                <button>Description</button>
+                <button>Citation</button>
               </div>
             </div>
           </section>
@@ -126,6 +127,7 @@ const Dashboard = () => {
           <div className="form-popup" id="CheckList-form">
             <form onSubmit={handleSubmit} className="form-container">
               <input
+                className="text-center rounded-lg block mb-2 text-sm font-medium text-black"
                 value={newItem}
                 onChange={(e) => setNewItem(e.target.value)}
                 type="text"
@@ -133,13 +135,13 @@ const Dashboard = () => {
                 placeholder="MAIN TASK"
               ></input>
               <button
-                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-gray dark:border-dark-3 dark:text-dark-6"
+                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-gray dark:border-dark-3 dark:text-dark-6 m-2"
                 onClick={() => OpenForm("createSub")}
               >
                 Create
               </button>
               <button
-                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6"
+                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2"
                 onClick={() => CloseForm("CheckList-form")}
               >
                 Cancel
@@ -149,35 +151,51 @@ const Dashboard = () => {
 
           {/* Form for entering sub-tasks */}
           <div className="form-popup" id="createSub">
-            <div className="text-[30px]">{title}</div>{" "}
+            <div className="text-[30px] rounded text-white bg-[#2a3990] p-2">
+              {title}
+            </div>{" "}
             {/*display the MAIN TASK name */}
-            {todos.map((todo) => {
-              return (
-                <li key={todo.id}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={todo.completed}
-                      onChange={(e) => toggleTodo(todo.id, e.target.checked)}
-                    />
-                    {todo.completed ? <del>{todo.title}</del> : todo.title}
-                    {/*display the subtask after it is added to the list*/}
-                  </label>
-                  <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-                </li>
-              );
-            })}
+            <div>
+              {todos.map((todo) => {
+                return (
+                  <li key={todo.id}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={(e) => toggleTodo(todo.id, e.target.checked)}
+                      />
+
+                      {todo.completed ? <del>{todo.title}</del> : todo.title}
+                      {/*display the subtask after it is added to the list*/}
+                    </label>
+                    <button
+                      className="inline-block rounded-full border border-gray-3 px-3 py-2 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2 "
+                      onClick={() => deleteTodo(todo.id)}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                );
+              })}
+            </div>
             <form onSubmit={createSubTask} className="form-container">
               <input
+                className="text-center rounded-lg block mb-2 text-md font-medium text-gray-900 dark:text-black border-black border-8"
                 value={newItem}
                 onChange={(e) => setNewItem(e.target.value)}
                 type="text"
                 id="item"
-                placeholder="SubTask"
+                placeholder="Add subtask to list"
               />
-              <button className="close-btn">Add</button>{" "}
+              <button className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2">
+                Add
+              </button>{" "}
               {/*clciking this add button will add subTask to the screen and temporarily store the value in the todos[] */}
-              <button className="close-btn" onClick={() => newTask()}>
+              <button
+                className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2"
+                onClick={() => newTask()}
+              >
                 {" "}
                 {/* clicking this will call our newTask function */}
                 Done
@@ -186,7 +204,7 @@ const Dashboard = () => {
           </div>
 
           {/* Display all tasks */}
-          <div className="grid grid-cols-4 gap-4 p-5">
+          <div className="fixed grid grid-cols-4 gap-4 p-5">
             {task.map((taskInfo) => {
               return (
                 <>

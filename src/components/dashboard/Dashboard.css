@@ -10,11 +10,13 @@
 .dash-content {
   flex-grow: 1;
   display: flex;
+  position: relative;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
   color: white;
+  height: fit-content;
+  width: 100%;
 }
 
 .dropdown {
@@ -64,28 +66,37 @@
 
 .form-popup {
   display: none;
-  position: sticky;
-  width: fit-content;
-  border: 3px solid #f1f1f1;
-  margin-left: auto;
-  margin-right: auto;
+  position: fixed;
+  width: max-content;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 9;
-  background-color: #2a3990;
   text-align: center;
   color: black;
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #2a3990;
+}
+#CheckList-form {
+  background-color: #2a3990;
 }
 
 .form-container {
+  display: block;
   max-width: max-content;
   padding: 10px;
-  background-color: #888;
+  border-radius: 8px;
+  justify-items: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 .form-container input[type="text"],
 .form-container input[type="password"] {
   width: 90%;
   padding: 15px;
   margin: 5px 0 22px 0;
-  border: none;
+  border: 2px solid black;
   background: #f1f1f1;
 }
 
@@ -110,6 +121,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  text: white;
 }
 button:hover {
   border-color: #646cff;
