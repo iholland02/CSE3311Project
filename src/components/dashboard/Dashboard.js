@@ -155,7 +155,7 @@ const Dashboard = () => {
       return currentTask.filter((todo) => todo.id !== id);
     });
 
-    //deleteDoc(doc(db,"Users/" + uid + "/dash" + id));
+    deleteDoc(doc(db,"Users/" + uid + "/dash/" + id));
   }
 
   return (
@@ -225,8 +225,8 @@ const Dashboard = () => {
                       {/*display the subtask after it is added to the list*/}
                     </label>
                     <button
-                      className="bg-[#ad0606] inline-block rounded-full border border-gray-3 px-3 py-2 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2 "
-                      onClick={() => deleteTodo(todo.id)}
+                    className="bg-[#ad0606] inline-block rounded-full border border-gray-3 px-3 py-2 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2 "
+                    onClick={() => deleteTodo(todo.id)}
                     >
                       Delete
                     </button>
@@ -302,7 +302,7 @@ const Dashboard = () => {
                         })}
                       </div>
                       <button
-                        className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6"
+                        className="bg-[#ad0606] inline-block rounded-full border border-gray-3 px-3 py-2 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2 "
                         onClick={() => deleteTask(taskInfo.id)}
                         id="edit-btn"
                       >
