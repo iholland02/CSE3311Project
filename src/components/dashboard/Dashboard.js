@@ -4,6 +4,20 @@ import { onAuthStateChanged } from "firebase/auth";
 import "../../App.css"; // Keep for common styles
 import "./Dashboard.css"; // Specific styles for dashboard
 import Topmenu from "./topmenu.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+} from "firebase/firestore";
+
+//calling initalizeApp
+<app />;
+
+//initialize DB
+const db = getFirestore();
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -11,14 +25,38 @@ const Dashboard = () => {
   const [title, setTitle] = useState("");
   const [todos, setTodos] = useState([]);
   const [newItem, setNewItem] = useState("");
+  const [uid, setUid] = useState(auth.uid);
+
+  // const citiesRef = firestore.collection('Indigo');
+  // const snapshot = citiesRef.get();
+
+  //fill the array with current DB contents
+
+  const fetchPost = async () => {
+    await getDocs(collection(db, "Users/" + uid + "/dash")).then(
+      (querySnapshot) => {
+        const newData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setTask(newData);
+        console.log(task, newData);
+      }
+    );
+  };
 
   // Authentication listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser ? currentUser : null);
+      setUid(currentUser.uid);
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    fetchPost();
+  });
 
   // Open and close forms based on id name
   function OpenForm(id) {
@@ -59,10 +97,19 @@ const Dashboard = () => {
       text: todo.title,
       completed: false,
     }));
+
+    const id = crypto.randomUUID();
     setTask([
       ...task,
-      { id: crypto.randomUUID(), taskTitle: title, subTask: subTask },
+      { type: "list", id: id, title: title, subTask: subTask },
     ]);
+    const path = doc(db, "Users/" + uid + "/dash/" + id);
+    console.log(path);
+    const data = {
+      title: title,
+      subTask: subTask,
+    };
+    setDoc(path, data);
     CloseForm("createSub");
     setTodos([]); // Reset the todos[] after copying data to task[]
   }
@@ -101,6 +148,14 @@ const Dashboard = () => {
     setTodos((currentTodos) => {
       return currentTodos.filter((todo) => todo.id !== id);
     });
+  }
+
+  function deleteTask(id) {
+    setTask((currentTask) => {
+      return currentTask.filter((todo) => todo.id !== id);
+    });
+
+    //deleteDoc(doc(db,"Users/" + uid + "/dash" + id));
   }
 
   return (
@@ -170,7 +225,7 @@ const Dashboard = () => {
                       {/*display the subtask after it is added to the list*/}
                     </label>
                     <button
-                      className="inline-block rounded-full border border-gray-3 px-3 py-2 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2 "
+                      className="bg-[#ad0606] inline-block rounded-full border border-gray-3 px-3 py-2 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2 "
                       onClick={() => deleteTodo(todo.id)}
                     >
                       Delete
@@ -204,7 +259,7 @@ const Dashboard = () => {
           </div>
 
           {/* Display all tasks */}
-          <div className="fixed grid grid-cols-4 gap-4 p-5">
+          <div className="grid grid-cols-4 gap-4 p-5">
             {task.map((taskInfo) => {
               return (
                 <>
@@ -213,9 +268,13 @@ const Dashboard = () => {
                       className="mb-10 overflow-hidden border border-black border-2 rounded-lg bg-primary text-black p-6 shadow-1 duration-300 hover:shadow-3 dark:bg-dark-2 dark:shadow-card dark:hover:shadow-3"
                       id="displayTask"
                     >
+                      <button className="bg-[#ad0606] rounded-full border border-gray-3 px-3 text-white text-xs font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6 m-2">
+                        delete
+                      </button>
                       <div className="text-[30px] font-bold">
-                        {taskInfo.taskTitle}
+                        {taskInfo.title}
                       </div>
+
                       <div className="pt-5 pb-8 text-left">
                         {taskInfo.subTask.map((sub) => {
                           return (
@@ -244,6 +303,7 @@ const Dashboard = () => {
                       </div>
                       <button
                         className="inline-block rounded-full border border-gray-3 px-7 py-2 text-white font-medium text-body-color transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-dark-6"
+                        onClick={() => deleteTask(taskInfo.id)}
                         id="edit-btn"
                       >
                         Edit

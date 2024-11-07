@@ -18,4 +18,4 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const analytics = getAnalytics(app);
 
-export { auth, provider, signInWithPopup, analytics };
+export { auth, provider, signInWithPopup, analytics, app };
