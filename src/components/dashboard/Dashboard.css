@@ -38,7 +38,8 @@
   margin-right: 20px; /* Add a little space on the right */
 }
 
-.create-button, .logout-button {
+.create-button,
+.logout-button {
   padding: 10px 20px;
   background-color: #ffffff;
   color: #2a3990;
@@ -49,7 +50,8 @@
   transition: background-color 0.3s;
 }
 
-.create-button:hover, .logout-button:hover {
+.create-button:hover,
+.logout-button:hover {
   background-color: #f0f0f0;
 }
 
@@ -68,13 +70,52 @@
 }
 
 .popup-inner {
-  background-color: #2a3990; /* Popup background same blue as homepage */
-  padding: 20px;
-  width: 350px; /* Reduced width to ensure content fits well */
+  background-color: #ffffff; /* Clean white background */
+  padding: 30px;
+  width: 400px;
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Add a soft shadow */
+  animation: slideIn 0.4s ease; /* Keep the slide-in animation */
+  text-align: center;
+  font-family: "Arial", sans-serif; /* Modern, clean font */
+}
+
+/* Heading style */
+.popup-inner h2 {
+  color: #2a3990; /* Match the theme's blue color */
+  font-size: 24px;
+  margin-bottom: 20px; /* Add spacing below the heading */
+  font-weight: 600;
+}
+
+/* Buttons in the popup */
+.popup-inner button {
+  padding: 12px 25px;
+  margin: 10px;
+  border: none;
   border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.4s ease;
-  text-align: center; /* Center the content inside the popup */
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #2a3990; /* Theme's blue */
+  color: #ffffff;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect for buttons */
+.popup-inner button:hover {
+  background-color: #1f3170; /* Slightly darker blue on hover */
+  transform: scale(1.05); /* Slight enlarge effect */
+}
+
+/* Cancel button style */
+.popup-inner button:last-child {
+  background-color: #d9534f; /* Use a red shade for cancel */
+  color: #ffffff;
+}
+
+.popup-inner button:last-child:hover {
+  background-color: #c9302c; /* Darker red for hover */
 }
 
 @keyframes slideIn {
@@ -86,32 +127,6 @@
     transform: translateY(0);
     opacity: 1;
   }
-}
-
-.popup-form input {
-  width: 95%; /* Ensure the input fits inside the popup with some padding */
-  padding: 12px;
-  margin: 12px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  text-align: center;
-  box-sizing: border-box; /* Ensure padding doesn't exceed the container width */
-}
-
-.popup-submit-btn, .popup-close-btn {
-  padding: 10px;
-  width: 100%;
-  background-color: white;
-  color: #2a3990;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-.popup-submit-btn:hover, .popup-close-btn:hover {
-  background-color: #f0f0f0;
 }
 
 /* Board cards */
@@ -230,4 +245,3 @@
   cursor: pointer;
   width: 100%;
 }
- 
