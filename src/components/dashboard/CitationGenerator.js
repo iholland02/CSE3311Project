@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle, AlertDialog, AlertDialogAction } from '@/components/ui/alert';
+import React, { useState, useEffect } from 'react';
+import './CitationGenerator.css';
 
 const CitationGenerator = () => {
   const [citationType, setCitationType] = useState('website');
@@ -26,330 +26,266 @@ const CitationGenerator = () => {
     year: '',
   });
   const [citation, setCitation] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
+  const [copyButtonText, setCopyButtonText] = useState('Copy to Clipboard');
+
+  useEffect(() => {
+    generateCitation();
+  }, [websiteData, bookData, journalData, citationStyle]);
 
   const handleCitationTypeChange = (type) => {
     setCitationType(type);
-    setCitation('');
+    setCitation(''); // Clear citation when switching type
   };
 
   const handleCitationStyleChange = (style) => {
     setCitationStyle(style);
-    generateCitation();
   };
 
-  const handleWebsiteDataChange = (field, value) => {
-    setWebsiteData((prevData) => ({ ...prevData, [field]: value }));
-    generateCitation();
-  };
-
-  const handleBookDataChange = (field, value) => {
-    setBookData((prevData) => ({ ...prevData, [field]: value }));
-    generateCitation();
-  };
-
-  const handleJournalDataChange = (field, value) => {
-    setJournalData((prevData) => ({ ...prevData, [field]: value }));
-    generateCitation();
+  const handleDataChange = (dataType, field, value) => {
+    if (dataType === 'website') {
+      setWebsiteData((prevData) => ({ ...prevData, [field]: value }));
+    } else if (dataType === 'book') {
+      setBookData((prevData) => ({ ...prevData, [field]: value }));
+    } else if (dataType === 'journal') {
+      setJournalData((prevData) => ({ ...prevData, [field]: value }));
+    }
   };
 
   const generateCitation = () => {
-    let citation = '';
+    let generatedCitation = '';
     if (citationType === 'website') {
-      citation = generateWebsiteCitation();
+      generatedCitation = generateWebsiteCitation();
     } else if (citationType === 'book') {
-      citation = generateBookCitation();
+      generatedCitation = generateBookCitation();
     } else if (citationType === 'journal') {
-      citation = generateJournalCitation();
+      generatedCitation = generateJournalCitation();
     }
-    setCitation(citation);
+    setCitation(generatedCitation);
   };
 
   const generateWebsiteCitation = () => {
+    const { title, url, author, date } = websiteData;
     switch (citationStyle) {
       case 'MLA':
-        return `${websiteData.author}. "${websiteData.title}." ${websiteData.url}, ${websiteData.date}.`;
+        return `${author}. "${title}." ${url}, ${date}.`;
       case 'APA':
-        return `${websiteData.author}. (${websiteData.date}). ${websiteData.title}. ${websiteData.url}.`;
+        return `${author}. (${date}). ${title}. ${url}.`;
       case 'Chicago':
-        return `${websiteData.author}, "${websiteData.title}", accessed ${websiteData.date}, ${websiteData.url}.`;
+        return `${author}, "${title}", accessed ${date}, ${url}.`;
       case 'IEEE':
-        return `[1] ${websiteData.author}, "${websiteData.title}", ${websiteData.url}. (accessed ${websiteData.date})`;
+        return `[1] ${author}, "${title}", ${url}. (accessed ${date})`;
       default:
         return '';
     }
   };
 
   const generateBookCitation = () => {
+    const { title, author, publisher, year } = bookData;
     switch (citationStyle) {
       case 'MLA':
-        return `${bookData.author}. ${bookData.title}. ${bookData.publisher}, ${bookData.year}.`;
+        return `${author}. ${title}. ${publisher}, ${year}.`;
       case 'APA':
-        return `${bookData.author}. (${bookData.year}). ${bookData.title}. ${bookData.publisher}.`;
+        return `${author}. (${year}). ${title}. ${publisher}.`;
       case 'Chicago':
-        return `${bookData.author}, ${bookData.title} (${bookData.publisher}, ${bookData.year}).`;
+        return `${author}, ${title} (${publisher}, ${year}).`;
       case 'IEEE':
-        return `[1] ${bookData.author}, ${bookData.title}. ${bookData.publisher}, ${bookData.year}.`;
+        return `[1] ${author}, ${title}. ${publisher}, ${year}.`;
       default:
         return '';
     }
   };
 
   const generateJournalCitation = () => {
+    const { title, author, journal, volume, issue, pages, year } = journalData;
     switch (citationStyle) {
       case 'MLA':
-        return `${journalData.author}. "${journalData.title}." ${journalData.journal} ${journalData.volume}.${journalData.issue} (${journalData.year}): ${journalData.pages}.`;
+        return `${author}. "${title}." ${journal} ${volume}.${issue} (${year}): ${pages}.`;
       case 'APA':
-        return `${journalData.author}. (${journalData.year}). ${journalData.title}. ${journalData.journal}, ${journalData.volume}(${journalData.issue}), ${journalData.pages}.`;
+        return `${author}. (${year}). ${title}. ${journal}, ${volume}(${issue}), ${pages}.`;
       case 'Chicago':
-        return `${journalData.author}, "${journalData.title}," ${journalData.journal} ${journalData.volume}, no. ${journalData.issue} (${journalData.year}): ${journalData.pages}.`;
+        return `${author}, "${title}," ${journal} ${volume}, no. ${issue} (${year}): ${pages}.`;
       case 'IEEE':
-        return `[1] ${journalData.author}, "${journalData.title}," ${journalData.journal}, vol. ${journalData.volume}, no. ${journalData.issue}, p. ${journalData.pages}, ${journalData.year}.`;
+        return `[1] ${author}, "${title}," ${journal}, vol. ${volume}, no. ${issue}, p. ${pages}, ${year}.`;
       default:
         return '';
     }
   };
 
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(citation);
+    setCopyButtonText('Copied!');
+    setTimeout(() => {
+      setCopyButtonText('Copy to Clipboard');
+    }, 2000);
+  };
+
   return (
-    <div>
-      <div className="flex space-x-4 mb-4">
+    <div className="citation-generator-container">
+      {/* Citation Type Buttons */}
+      <div className="button-group">
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationType === 'website' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`type-button ${citationType === 'website' ? 'active' : ''}`}
           onClick={() => handleCitationTypeChange('website')}
         >
           Website
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationType === 'book' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`type-button ${citationType === 'book' ? 'active' : ''}`}
           onClick={() => handleCitationTypeChange('book')}
         >
           Book
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationType === 'journal' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`type-button ${citationType === 'journal' ? 'active' : ''}`}
           onClick={() => handleCitationTypeChange('journal')}
         >
           Journal
         </button>
       </div>
 
-      <div className="flex space-x-4 mb-4">
+      {/* Citation Style Buttons */}
+      <div className="button-group">
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationStyle === 'MLA' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`style-button ${citationStyle === 'MLA' ? 'active' : ''}`}
           onClick={() => handleCitationStyleChange('MLA')}
         >
           MLA
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationStyle === 'APA' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`style-button ${citationStyle === 'APA' ? 'active' : ''}`}
           onClick={() => handleCitationStyleChange('APA')}
         >
           APA
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationStyle === 'Chicago' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`style-button ${citationStyle === 'Chicago' ? 'active' : ''}`}
           onClick={() => handleCitationStyleChange('Chicago')}
         >
           Chicago
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
-            citationStyle === 'IEEE' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          className={`style-button ${citationStyle === 'IEEE' ? 'active' : ''}`}
           onClick={() => handleCitationStyleChange('IEEE')}
         >
           IEEE
         </button>
       </div>
 
-      {citationType === 'website' && (
-        <div>
-          <label className="block mb-2">
-            Title:
+      {/* Citation Form */}
+      <div className="form-container">
+        {citationType === 'website' && (
+          <>
             <input
               type="text"
+              placeholder="Enter website title"
               value={websiteData.title}
-              onChange={(e) => handleWebsiteDataChange('title', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('website', 'title', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            URL:
             <input
               type="text"
+              placeholder="Enter website URL"
               value={websiteData.url}
-              onChange={(e) => handleWebsiteDataChange('url', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('website', 'url', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Author:
             <input
               type="text"
+              placeholder="Enter author name"
               value={websiteData.author}
-              onChange={(e) => handleWebsiteDataChange('author', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('website', 'author', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Date:
             <input
               type="text"
+              placeholder="Enter publication date"
               value={websiteData.date}
-              onChange={(e) => handleWebsiteDataChange('date', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('website', 'date', e.target.value)}
             />
-          </label>
-        </div>
-      )}
+          </>
+        )}
 
-      {citationType === 'book' && (
-        <div>
-          <label className="block mb-2">
-            Title:
+        {citationType === 'book' && (
+          <>
             <input
               type="text"
+              placeholder="Enter book title"
               value={bookData.title}
-              onChange={(e) => handleBookDataChange('title', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('book', 'title', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Author:
             <input
               type="text"
+              placeholder="Enter author name"
               value={bookData.author}
-              onChange={(e) => handleBookDataChange('author', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('book', 'author', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Publisher:
             <input
               type="text"
+              placeholder="Enter publisher"
               value={bookData.publisher}
-              onChange={(e) => handleBookDataChange('publisher', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('book', 'publisher', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Year:
             <input
               type="text"
+              placeholder="Enter publication year"
               value={bookData.year}
-              onChange={(e) => handleBookDataChange('year', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('book', 'year', e.target.value)}
             />
-          </label>
-        </div>
-      )}
+          </>
+        )}
 
-      {citationType === 'journal' && (
-        <div>
-          <label className="block mb-2">
-            Title:
+        {citationType === 'journal' && (
+          <>
             <input
               type="text"
+              placeholder="Enter journal title"
               value={journalData.title}
-              onChange={(e) => handleJournalDataChange('title', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'title', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Author:
             <input
               type="text"
+              placeholder="Enter author name"
               value={journalData.author}
-              onChange={(e) => handleJournalDataChange('author', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'author', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Journal:
             <input
               type="text"
+              placeholder="Enter journal name"
               value={journalData.journal}
-              onChange={(e) => handleJournalDataChange('journal', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'journal', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Volume:
             <input
               type="text"
+              placeholder="Enter volume"
               value={journalData.volume}
-              onChange={(e) => handleJournalDataChange('volume', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'volume', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Issue:
             <input
               type="text"
+              placeholder="Enter issue"
               value={journalData.issue}
-              onChange={(e) => handleJournalDataChange('issue', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'issue', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Pages:
             <input
               type="text"
+              placeholder="Enter page numbers"
               value={journalData.pages}
-              onChange={(e) => handleJournalDataChange('pages', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'pages', e.target.value)}
             />
-          </label>
-          <label className="block mb-2">
-            Year:
             <input
               type="text"
+              placeholder="Enter publication year"
               value={journalData.year}
-              onChange={(e) => handleJournalDataChange('year', e.target.value)}
-              className="border rounded-md p-2 w-full"
+              onChange={(e) => handleDataChange('journal', 'year', e.target.value)}
             />
-          </label>
-        </div>
-      )}
-
-      <div className="mt-4">
-        <h3 className="text-lg font-bold">Citation:</h3>
-        <pre className="bg-gray-100 p-4 rounded-md whitespace-pre-wrap">{citation}</pre>
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-2"
-          onClick={() => {
-            navigator.clipboard.writeText(citation);
-            setShowAlert(true);
-          }}
-        >
-          Copy to Clipboard
-        </button>
+          </>
+        )}
       </div>
 
-      {showAlert && (
-        <AlertDialog>
-          <AlertDialogAction onClick={() => setShowAlert(false)}>
-            <Alert>
-              <AlertTitle>Citation Copied</AlertTitle>
-              <AlertDescription>
-                The citation has been copied to your clipboard.
-              </AlertDescription>
-            </Alert>
-          </AlertDialogAction>
-        </AlertDialog>
-      )}
+      {/* Citation Output */}
+      <div className="citation-output">
+        <pre>{citation}</pre>
+        <button className="copy-button" onClick={handleCopyToClipboard}>
+          {copyButtonText}
+        </button>
+      </div>
     </div>
   );
 };

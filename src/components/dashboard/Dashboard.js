@@ -12,7 +12,7 @@ import {
 import "../../App.css";
 import "./Dashboard.css";
 import logo from "../../assets/images/logo-color.png";
-
+import CitationGenerator from "./CitationGenerator";
 
 const db = getFirestore();
 
@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [newSubtask, setNewSubtask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
+  const [isCitationGeneratorOpen, setIsCitationGeneratorOpen] = useState(false);
 
   // Fetch boards on user login
   useEffect(() => {
@@ -47,7 +48,6 @@ const Dashboard = () => {
 
   const fetchBoards = async (uid) => {
     try {
-      // Correctly reference the user's document and 'boards' subcollection
       const userRef = doc(db, "Users", uid);
       const boardCollection = collection(userRef, "boards");
       const boardDocs = await getDocs(boardCollection);
@@ -60,10 +60,8 @@ const Dashboard = () => {
       console.error("Error fetching boards:", error);
     }
   };
-  
 
   const togglePopup = () => setIsPopupOpen(!isPopupOpen);
-
   const toggleCardTypePopup = () => setIsCardTypePopupOpen(!isCardTypePopupOpen);
 
   const handleCardTypeSelect = (type) => {
@@ -78,13 +76,14 @@ const Dashboard = () => {
       const newBoard = {
         title: newBoardTitle,
         subtasks: [],
+        citations: [],
         cardType: selectedCardType,
       };
       try {
         const userRef = doc(db, "Users", user.uid);
-        const boardRef = doc(collection(userRef, "boards")); // Automatically generates a unique ID
+        const boardRef = doc(collection(userRef, "boards"));
         await setDoc(boardRef, newBoard);
-  
+
         setBoards([...boards, { id: boardRef.id, ...newBoard }]);
         setNewBoardTitle("");
         setIsPopupOpen(false);
@@ -93,44 +92,58 @@ const Dashboard = () => {
       }
     }
   };
-  
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => console.log("User signed out"))
-      .catch((error) => console.error("Error signing out:", error));
-  };
-
-  const handleSelectBoard = (board) => setSelectedBoard(board);
 
   const handleAddSubtask = async (e) => {
     e.preventDefault();
-    if (newSubtask && newDueDate && user) {
+    if (newSubtask && user) {
       const newSubtaskObj = {
         id: crypto.randomUUID(),
         text: newSubtask,
         completed: false,
-        dueDate: new Date(newDueDate).toISOString().substring(0, 10),
+        dueDate: selectedBoard.cardType === "Schedule" ? new Date(newDueDate).toISOString().substring(0, 10) : null,
       };
+
       const updatedBoard = {
         ...selectedBoard,
-        subtasks: [...selectedBoard.subtasks, newSubtaskObj],
+        subtasks: [...(selectedBoard.subtasks || []), newSubtaskObj],
       };
 
       const boardRef = doc(db, `Users/${user.uid}/boards/${selectedBoard.id}`);
       await setDoc(boardRef, updatedBoard);
 
-      setBoards(boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board)));
+      setBoards(
+        boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board))
+      );
       setSelectedBoard(updatedBoard);
       setNewSubtask("");
       setNewDueDate("");
     }
   };
 
-  const handleToggleCompleteSubtask = async (subtaskId) => {
-    if (!user || !selectedBoard) return;
+  const handleAddCitation = async (citation) => {
+    const newCitation = {
+      id: crypto.randomUUID(),
+      text: citation,
+      completed: false,
+    };
 
-    const updatedSubtasks = selectedBoard.subtasks.map((subtask) =>
-      subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask
+    const updatedBoard = {
+      ...selectedBoard,
+      subtasks: [...(selectedBoard.subtasks || []), newCitation],
+    };
+
+    const boardRef = doc(db, `Users/${user.uid}/boards/${selectedBoard.id}`);
+    await setDoc(boardRef, updatedBoard);
+
+    setBoards(
+      boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board))
+    );
+    setSelectedBoard(updatedBoard);
+  };
+
+  const handleDeleteSubtask = async (subtaskId) => {
+    const updatedSubtasks = (selectedBoard.subtasks || []).filter(
+      (subtask) => subtask.id !== subtaskId
     );
 
     const updatedBoard = { ...selectedBoard, subtasks: updatedSubtasks };
@@ -138,36 +151,38 @@ const Dashboard = () => {
     const boardRef = doc(db, `Users/${user.uid}/boards/${selectedBoard.id}`);
     await setDoc(boardRef, updatedBoard);
 
-    setBoards(boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board)));
+    setBoards(
+      boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board))
+    );
     setSelectedBoard(updatedBoard);
   };
 
-  const handleDeleteSubtask = async (subtaskId) => {
-    if (!user || !selectedBoard) return;
-
-    const updatedSubtasks = selectedBoard.subtasks.filter((subtask) => subtask.id !== subtaskId);
+  const handleToggleCompleteSubtask = async (subtaskId) => {
+    const updatedSubtasks = (selectedBoard.subtasks || []).map((subtask) =>
+      subtask.id === subtaskId
+        ? { ...subtask, completed: !subtask.completed }
+        : subtask
+    );
 
     const updatedBoard = { ...selectedBoard, subtasks: updatedSubtasks };
 
     const boardRef = doc(db, `Users/${user.uid}/boards/${selectedBoard.id}`);
     await setDoc(boardRef, updatedBoard);
 
-    setBoards(boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board)));
+    setBoards(
+      boards.map((board) => (board.id === selectedBoard.id ? updatedBoard : board))
+    );
     setSelectedBoard(updatedBoard);
   };
 
-  const handleDeleteBoard = async () => {
-    if (user && selectedBoard) {
-      await deleteDoc(doc(db, `Users/${user.uid}/boards/${selectedBoard.id}`));
-      setBoards(boards.filter((board) => board.id !== selectedBoard.id));
-      setSelectedBoard(null);
-    }
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => console.log("User signed out"))
+      .catch((error) => console.error("Error signing out:", error));
   };
 
-  const handleCloseBoard = () => setSelectedBoard(null);
-
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${selectedBoard ? "blur-background" : ""}`}>
       <div className="header-container">
         <img src={logo} alt="Boardr Logo" className="boardr-logo" />
         <div className="center-header-text">
@@ -199,7 +214,7 @@ const Dashboard = () => {
         <div className="popup">
           <div className="popup-inner">
             <h2>Create New Project</h2>
-            <form onSubmit={handleCreateBoard} className="popup-form">
+            <form onSubmit={handleCreateBoard}>
               <input
                 type="text"
                 placeholder="Project/Assignment Title"
@@ -210,7 +225,7 @@ const Dashboard = () => {
               <button type="submit" className="popup-submit-btn">
                 Create
               </button>
-              <button type="button" className="popup-close-btn" onClick={togglePopup}>
+              <button type="button" onClick={togglePopup}>
                 Cancel
               </button>
             </form>
@@ -223,10 +238,9 @@ const Dashboard = () => {
           <div
             key={board.id}
             className="board-card"
-            onClick={() => handleSelectBoard(board)}
+            onClick={() => setSelectedBoard(board)}
           >
             <h3>{board.title}</h3>
-            <p>Type: {board.cardType}</p>
           </div>
         ))}
       </div>
@@ -234,41 +248,64 @@ const Dashboard = () => {
       {selectedBoard && (
         <div className="expanded-board">
           <h2>{selectedBoard.title}</h2>
-          <p>Type: {selectedBoard.cardType}</p>
-          <form onSubmit={handleAddSubtask} className="subtask-form">
-            <input
-              type="text"
-              placeholder="Add a subtask"
-              value={newSubtask}
-              onChange={(e) => setNewSubtask(e.target.value)}
-              required
-            />
-            <input
-              type="date"
-              value={newDueDate}
-              onChange={(e) => setNewDueDate(e.target.value)}
-              required
-            />
-            <button type="submit" className="add-subtask-btn">+</button>
-          </form>
-          <ul className="subtask-list">
-            {selectedBoard.subtasks.map((subtask) => (
-              <li key={subtask.id} className={subtask.completed ? "completed" : ""}>
-                <span>{subtask.text}</span>
-                <span>{new Date(subtask.dueDate).toLocaleDateString("en-US")}</span>
-                <input
-                  type="checkbox"
-                  checked={subtask.completed}
-                  onChange={() => handleToggleCompleteSubtask(subtask.id)}
-                />
-                <i className="fas fa-trash" onClick={() => handleDeleteSubtask(subtask.id)}></i>
-              </li>
-            ))}
-          </ul>
-          <button className="close-board-btn" onClick={handleCloseBoard}>
+          <div>
+            <form onSubmit={handleAddSubtask} className="subtask-form">
+              <input
+                type="text"
+                placeholder="Add an item"
+                value={newSubtask}
+                onChange={(e) => setNewSubtask(e.target.value)}
+                required
+              />
+              <button type="submit">Add</button>
+            </form>
+            <ul className="subtask-list">
+              {(selectedBoard.subtasks || []).map((subtask) => (
+                <li key={subtask.id}>
+                  <span
+                    style={{
+                      textDecoration: subtask.completed ? "line-through" : "none",
+                    }}
+                  >
+                    {subtask.text}
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={subtask.completed}
+                    onChange={() => handleToggleCompleteSubtask(subtask.id)}
+                  />
+                  <button onClick={() => handleDeleteSubtask(subtask.id)}>
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {selectedBoard.cardType === "Citation" && (
+            <div>
+              <button
+  className="citation-button"
+  onClick={() => setIsCitationGeneratorOpen(!isCitationGeneratorOpen)}
+>
+  {isCitationGeneratorOpen ? "Close Citation Generator" : "Create Citation"}
+</button>
+
+              {isCitationGeneratorOpen && (
+                <CitationGenerator onCitationCopy={handleAddCitation} />
+              )}
+            </div>
+          )}
+          <button className="close-board-btn" onClick={() => setSelectedBoard(null)}>
             Close Board
           </button>
-          <button className="delete-board-btn" onClick={handleDeleteBoard}>
+          <button
+            className="delete-board-btn"
+            onClick={async () => {
+              await deleteDoc(doc(db, `Users/${user.uid}/boards/${selectedBoard.id}`));
+              setBoards(boards.filter((board) => board.id !== selectedBoard.id));
+              setSelectedBoard(null);
+            }}
+          >
             Delete Board
           </button>
         </div>
