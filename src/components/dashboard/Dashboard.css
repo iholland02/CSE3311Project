@@ -1,24 +1,25 @@
+/* General dashboard styles */
 .dashboard-container {
   position: relative;
   padding: 20px;
-  background-color: #2a3990; /* Set the background color to blue */
-  height: 100vh; /* Ensure the height takes up the full view */
+  background-color: #2a3990; /* Dashboard background */
+  height: 100vh; /* Full view height */
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  color: white; /* Ensure text is readable on the blue background */
+  color: white; /* Text color */
 }
 
+/* Header styles */
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px; /* Adjust padding to keep space on left and right */
-  width: 100%; /* Ensure it stretches across the screen */
-  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .boardr-logo {
-  height: 40px; /* Adjust size as needed */
-  margin-left: 20px;
+  height: 40px;
 }
 
 .center-header-text {
@@ -35,7 +36,6 @@
 .create-button-container {
   display: flex;
   gap: 10px;
-  margin-right: 20px; /* Add a little space on the right */
 }
 
 .create-button,
@@ -59,10 +59,10 @@
 .popup {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Darkened background */
+  background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,25 +70,22 @@
 }
 
 .popup-inner {
-  background-color: #ffffff; /* Clean white background */
+  background-color: #ffffff;
   padding: 30px;
   width: 400px;
-  border-radius: 12px; /* Rounded corners */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Add a soft shadow */
-  animation: slideIn 0.4s ease; /* Keep the slide-in animation */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
-  font-family: "Arial", sans-serif; /* Modern, clean font */
+  font-family: Arial, sans-serif;
 }
 
-/* Heading style */
 .popup-inner h2 {
-  color: #2a3990; /* Match the theme's blue color */
+  color: #2a3990;
   font-size: 24px;
-  margin-bottom: 20px; /* Add spacing below the heading */
+  margin-bottom: 20px;
   font-weight: 600;
 }
 
-/* Buttons in the popup */
 .popup-inner button {
   padding: 12px 25px;
   margin: 10px;
@@ -97,44 +94,30 @@
   font-size: 16px;
   cursor: pointer;
   font-weight: bold;
-  background-color: #2a3990; /* Theme's blue */
+  background-color: #2a3990;
   color: #ffffff;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Hover effect for buttons */
 .popup-inner button:hover {
-  background-color: #1f3170; /* Slightly darker blue on hover */
-  transform: scale(1.05); /* Slight enlarge effect */
+  background-color: #1f3170;
+  transform: scale(1.05);
 }
 
-/* Cancel button style */
 .popup-inner button:last-child {
-  background-color: #d9534f; /* Use a red shade for cancel */
-  color: #ffffff;
+  background-color: #d9534f;
 }
 
 .popup-inner button:last-child:hover {
-  background-color: #c9302c; /* Darker red for hover */
+  background-color: #c9302c;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Board cards */
+/* Board container styles */
 .board-container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin-top: 80px;
+  margin-top: 20px;
 }
 
 .board-card {
@@ -153,7 +136,7 @@
   transform: scale(1.05);
 }
 
-/* Expanded board view for subtasks */
+/* Expanded board view */
 .expanded-board {
   background-color: white;
   color: #2a3990;
@@ -164,7 +147,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 1100;
   width: 400px;
   text-align: center;
 }
@@ -177,24 +160,31 @@
 }
 
 .subtask-form input {
-  width: 80%;
+  flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  margin-right: 10px;
 }
 
-.add-subtask-btn {
-  padding: 10px;
+.subtask-form button {
+  padding: 10px 15px;
   background-color: #2a3990;
   color: white;
   border: none;
-  border-radius: 50%;
+  border-radius: 8px;
   cursor: pointer;
 }
 
+.subtask-form button:hover {
+  background-color: #1f3170;
+}
+
+/* Subtask list */
 .subtask-list {
   list-style-type: none;
   padding: 0;
+  margin-top: 10px;
 }
 
 .subtask-list li {
@@ -205,25 +195,77 @@
   border-bottom: 1px solid #ccc;
 }
 
-.subtask-list li.completed span {
-  text-decoration: line-through;
-  color: #999;
-}
-
 .subtask-list li span {
   flex-grow: 1;
   text-align: left;
+}
+
+.subtask-list li.completed span {
+  text-decoration: line-through;
+  color: #999;
 }
 
 .subtask-list li input[type="checkbox"] {
   margin-right: 10px;
 }
 
-.subtask-list i {
+.subtask-list li button {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
   cursor: pointer;
-  color: red;
 }
 
+.subtask-list li button:hover {
+  background-color: darkred;
+}
+
+/* Citation generator styles */
+.citation-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(50%, -50%);
+  z-index: 1200;
+  width: 450px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.citation-overlay h2 {
+  color: #2a3990;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.citation-overlay .button-group button {
+  padding: 10px 15px;
+  background-color: #2a3990;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.citation-overlay .button-group button:hover {
+  background-color: #1f3170;
+}
+
+.citation-overlay input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Close and delete board buttons */
 .close-board-btn {
   margin-top: 20px;
   padding: 10px;
@@ -235,6 +277,10 @@
   width: 100%;
 }
 
+.close-board-btn:hover {
+  background-color: #3367d6;
+}
+
 .delete-board-btn {
   margin-top: 10px;
   padding: 10px;
@@ -244,4 +290,31 @@
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
+}
+
+.delete-board-btn:hover {
+  background-color: darkred;
+}
+
+.citation-button {
+  background-color: #2a3990;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.citation-button:hover {
+  background-color: #1f3170;
+  transform: scale(1.05);
+}
+
+.citation-button:active {
+  background-color: #3a4aa5;
+  transform: scale(1);
 }

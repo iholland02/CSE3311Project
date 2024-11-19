@@ -1,0 +1,107 @@
+.citation-generator-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 450px;
+  position: absolute;
+  right: -480px; /* Adjusted to place on the right */
+  top: 0;
+  font-family: Arial, sans-serif;
+  z-index: 1000;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.type-button,
+.style-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.type-button.active,
+.style-button.active {
+  background-color: #2a3990;
+  color: #ffffff;
+}
+
+.type-button,
+.style-button {
+  background-color: #e0e0e0;
+  color: #2a3990;
+  transition: background-color 0.3s ease;
+}
+
+.type-button:hover,
+.style-button:hover {
+  background-color: #d6d6d6;
+}
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-container input {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.citation-output {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.citation-output pre {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.copy-button {
+  padding: 10px 20px;
+  background-color: #2a3990;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.copy-button:hover {
+  background-color: #1f3170;
+}
+
+/* Citation Generator Toggle Button */
+.citation-generator-toggle {
+  padding: 8px 12px;
+  background-color: #4285f4;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.citation-generator-toggle:hover {
+  background-color: #3367d6;
+}
+
