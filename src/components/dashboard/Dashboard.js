@@ -76,7 +76,6 @@ const Dashboard = () => {
       const newBoard = {
         title: newBoardTitle,
         subtasks: [],
-        citations: [],
         cardType: selectedCardType,
       };
       try {
@@ -124,7 +123,6 @@ const Dashboard = () => {
     const newCitation = {
       id: crypto.randomUUID(),
       text: citation,
-      completed: false,
     };
 
     const updatedBoard = {
@@ -257,6 +255,14 @@ const Dashboard = () => {
                 onChange={(e) => setNewSubtask(e.target.value)}
                 required
               />
+              {selectedBoard.cardType === "Schedule" && (
+                <input
+                  type="date"
+                  value={newDueDate}
+                  onChange={(e) => setNewDueDate(e.target.value)}
+                  required
+                />
+              )}
               <button type="submit">Add</button>
             </form>
             <ul className="subtask-list">
@@ -267,7 +273,8 @@ const Dashboard = () => {
                       textDecoration: subtask.completed ? "line-through" : "none",
                     }}
                   >
-                    {subtask.text}
+                    {subtask.text}{" "}
+                    {subtask.dueDate && <span>({subtask.dueDate})</span>}
                   </span>
                   <input
                     type="checkbox"
@@ -284,12 +291,11 @@ const Dashboard = () => {
           {selectedBoard.cardType === "Citation" && (
             <div>
               <button
-  className="citation-button"
-  onClick={() => setIsCitationGeneratorOpen(!isCitationGeneratorOpen)}
->
-  {isCitationGeneratorOpen ? "Close Citation Generator" : "Create Citation"}
-</button>
-
+                className="citation-button"
+                onClick={() => setIsCitationGeneratorOpen(!isCitationGeneratorOpen)}
+              >
+                {isCitationGeneratorOpen ? "Close Citation Generator" : "Create Citation"}
+              </button>
               {isCitationGeneratorOpen && (
                 <CitationGenerator onCitationCopy={handleAddCitation} />
               )}
